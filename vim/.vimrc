@@ -12,47 +12,53 @@ endif
 
 call plug#begin()
 Plug 'tpope/vim-fugitive'
-Plug 'LaTeX-Suite-aka-Vim-LaTeX'
-Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'lervag/vimtex'
+Plug 'tomtom/tlib_vim'
+Plug 'marcweber/vim-addon-mw-utils'
 Plug 'scrooloose/nerdtree' , {'on': 'NERDTreeToggle'}  "Lazy Loading Example
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'scrooloose/NERDCommenter'
+Plug 'eagletmt/ghcmod-vim'
+Plug 'eagletmt/neco-ghc'
+Plug 'garbas/vim-snipmate'
+Plug 'scrooloose/syntastic'
+Plug 'Shougo/neocomplete.vim'
+Plug 'kien/ctrlp.vim'
+Plug 'godlygeek/tabular'
+Plug 'ervandew/supertab'
 call plug#end()
 
-set tabstop=4       " Number of spaces that a <Tab> in the file counts for.
-set shiftwidth=4    " Number of spaces to use for each step of (auto)indent.
-set expandtab       " Use the appropriate number of spaces to insert a <Tab>.
-                    " Spaces are used in indents with the '>' and '<' commands
-                    " and when 'autoindent' is on. To insert a real tab when
-                    " 'expandtab' is on, use CTRL-V <Tab>.
- 
-set smarttab        " When on, a <Tab> in front of a line inserts blanks
-                    " according to 'shiftwidth'. 'tabstop' is used in other
-                    " places. A <BS> will delete a 'shiftwidth' worth of space
-                    " at the start of the line.
-set showcmd         " Show (partial) command in status line.
-set number          " Show line numbers.
-set showmatch       " When a bracket is inserted, briefly jump to the matching
-                    " one. The jump is only done if the match can be seen on the
-                    " screen. The time to show the match can be set with
-                    " 'matchtime'.
- 
-set hlsearch        " When there is a previous search pattern, highlight all
-                    " its matches.
- 
-set incsearch       " While typing a search command, show immediately where the
-                    " so far typed pattern matches.
-set ignorecase      " Ignore case in search patterns.
-set smartcase       " Override the 'ignorecase' option if the search pattern
-set backspace=2     " Influences the working of <BS>, <Del>, CTRL-W
-                    " and CTRL-U in Insert mode. This is a list of items,
-                    " separated by commas. Each item allows a way to backspace
-                    " over something.
- 
-set autoindent      " Copy indent from current line when starting a new line
-                    " (typing <CR> in Insert mode or when using the "o" or "O"
-                    " command).
- 
-set textwidth=150    " Maximum width of text that is being inserted. A longer
-                    " line will be broken after white space to get this width.
+set nocompatible
+set nowrap
+set expandtab       
+set smarttab        
+set showcmd         
+set number          
+set showmatch       
+set showmode
+set smarttab
+set smartindent
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set backspace=2
+set autoindent
+set textwidth=80
+set softtabstop=2
+set shiftwidth=2
+set expandtab
+set incsearch
+set history=1000
+set clipboard=unnamedplus,autoselect
+
+set completeopt=menuone,menu,longest
+set wildignore+=*\\tmp\\*,*.swp,*.swo,*.zip,.git,.cabal-sandbox
+set wildmode=longest,list,full
+set wildmenu
+set completeopt+=longest
+"set t_Co=256
+set cmdheight=1
 
 augroup project
     autocmd!
@@ -79,13 +85,15 @@ set gfn=Inconsolata\ Medium\ 12
 filetype plugin indent on
 syntax on
 set grepprg=grep\ -nH\ $*
+
 let g:tex_flavor = "latex"
-let g:Tex_DefaultTargetFormat='pdf'
-let g:Tex_MultipleCompileFormats='pdf'
-let g:Tex_UseMakefile=1
-let g:Tex_CompileRule_pdf='pdflatex -interaction=nonstopmode $*'
-let g:Tex_ViewRule_pdf="zathura"
-let g:Tex_ViewRuleComplete_pdf='start zathura $*'
+let g:vimtex_fold_enabled=0
+let g:vimtex_view_method='zathura'
+let g:vimtex_latexmk_continuous=1
+let g:vimtex_quickfix_mode=0
+let g:vimtex_latexmk_build_dir='build'
+let g:vimtex_latexmk_options='-pdf'
+
 set runtimepath=~/.vim,$VIM/vimfiles,$VIMRUNTIME,$VIM/vimfiles/after,~/.vim/after
 
 "NerdTREE
@@ -93,3 +101,42 @@ map <C-n> :NERDTreeToggle<CR>
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
+
+map <Leader>s :SyntasticToggleMode<CR>
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
+
+map <silent> tw :GhcModTypeInsert<CR>
+map <silent> ts :GhcModSplitFunCase<CR>
+map <silent> tq :GhcModType<CR>
+map <silent> te :GhcModTypeClear<CR>
+
+let g:SuperTabDefaultCompletionType = '<c-x><c-o>'
+
+if has("gui_running")
+  imap <c-space> <c-r>=SuperTabAlternateCompletion("\<lt>c-x>\<lt>c-o>")<cr>
+else " no gui
+  if has("unix")
+    inoremap <Nul> <c-r>=SuperTabAlternateCompletion("\<lt>c-x>\<lt>c-o>")<cr>
+  endif
+endif
+
+let g:haskellmode_completion_ghc = 1
+autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
+
+let g:haskell_tabular = 1
+
+vmap a= :Tabularize /=<CR>
+vmap a; :Tabularize /::<CR>
+vmap a- :Tabularize /-><CR>
+
+map <silent> <Leader>t :CtrlP()<CR>
+noremap <leader>b<space> :CtrlPBuffer<cr>
+let g:ctrlp_custom_ignore = '\v[\/]dist$'
