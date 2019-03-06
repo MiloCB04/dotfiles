@@ -4,24 +4,12 @@
 " For multi-byte character support (CJK support, for example):
 "set fileencodings=ucs-bom,utf-8,cp936,big5,euc-jp,euc-kr,gb18030,latin1
 
-if empty(glob('~/.vim/autoload/plug.vim')) 
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs \ 
-        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim 
-    autocmd VimEnter * PlugInstall 
-endif 
-
 call plug#begin()
 Plug 'tpope/vim-fugitive'
 Plug 'lervag/vimtex'
-Plug 'tomtom/tlib_vim'
-Plug 'marcweber/vim-addon-mw-utils'
 Plug 'scrooloose/nerdtree' , {'on': 'NERDTreeToggle'}  "Lazy Loading Example
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'scrooloose/NERDCommenter'
-Plug 'eagletmt/ghcmod-vim'
-Plug 'eagletmt/neco-ghc'
-Plug 'garbas/vim-snipmate'
-Plug 'scrooloose/syntastic'
 Plug 'Shougo/neocomplete.vim'
 Plug 'kien/ctrlp.vim'
 Plug 'godlygeek/tabular'
@@ -59,6 +47,7 @@ set wildmenu
 set completeopt+=longest
 "set t_Co=256
 set cmdheight=1
+set encoding=utf-8
 
 augroup project
     autocmd!
@@ -73,14 +62,10 @@ set background=dark " When set to "dark", Vim will try to use colors that look
                     " try to use colors that look good on a light background.
                     " Any other value is illegal.
  
-set mouse=a         " Enable the use of the mouse.
+set mouse=v         " Enable the use of the mouse.
 
 set exrc
 set secure
-
-colorscheme evening  
-
-set gfn=Inconsolata\ Medium\ 12
 
 filetype plugin indent on
 syntax on
@@ -102,40 +87,7 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 
-map <Leader>s :SyntasticToggleMode<CR>
-
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
-
-map <silent> tw :GhcModTypeInsert<CR>
-map <silent> ts :GhcModSplitFunCase<CR>
-map <silent> tq :GhcModType<CR>
-map <silent> te :GhcModTypeClear<CR>
-
 let g:SuperTabDefaultCompletionType = '<c-x><c-o>'
-
-if has("gui_running")
-  imap <c-space> <c-r>=SuperTabAlternateCompletion("\<lt>c-x>\<lt>c-o>")<cr>
-else " no gui
-  if has("unix")
-    inoremap <Nul> <c-r>=SuperTabAlternateCompletion("\<lt>c-x>\<lt>c-o>")<cr>
-  endif
-endif
-
-let g:haskellmode_completion_ghc = 1
-autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
-
-let g:haskell_tabular = 1
-
-vmap a= :Tabularize /=<CR>
-vmap a; :Tabularize /::<CR>
-vmap a- :Tabularize /-><CR>
 
 map <silent> <Leader>t :CtrlP()<CR>
 noremap <leader>b<space> :CtrlPBuffer<cr>
